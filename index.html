@@ -85,11 +85,11 @@ $('pv').onclick=()=>{vm--;if(vm<0){vm=11;vy--}cal()};$('nx').onclick=()=>{vm++;i
 $('ms').innerHTML=MN.map((m,i)=>`<option value="${i}">${m}</option>`).join('');
 $('ms').onchange=e=>{vm=+e.target.value;cal()};$('ys').onchange=e=>{vy=+e.target.value||vy;cal()};
 rowsR();
-let DL=null;(async()=>{try{DL=await claude.use('downloads')}catch(_){}if(DL){$('dl').hidden=false;if(!window.XLSX)$('dx').hidden=true}})();
+let DL=null;$('dl').hidden=false;if(!window.XLSX)$('dx').hidden=true;(async()=>{try{DL=await claude.use('downloads')}catch(_){}})();
 const HD=['N.º','Desde','Hasta','Observación','Operación','Días hábiles','Días calendario'];
 function tabla(){let H=0,C=0;const f=[];rows.forEach((r,i)=>{const v=calc(r);if(!v||v.err)return;const g=r.d?-1:1;H+=g*v.h;C+=g*v.c;f.push([i+1,fd(r.s),fd(r.e),r.o||'',r.d?'Resta':'Suma',g*v.h,g*v.c])});
 return{f,H,C,nota:`Cómputo ${$('inc').checked?'incluyendo':'sin incluir'} el día inicial. Días hábiles: lunes a viernes, excluidos los festivos de Colombia. Generado el ${new Date().toLocaleDateString('es-CO')}.`}}
-const sv=async(n,d)=>{try{await DL.save({filename:n,data:d})}catch(_){}};
+const sv=async(n,d)=>{if(DL){try{await DL.save({filename:n,data:d})}catch(_){}return}const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([d]));a.download=n;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
 $('dx').onclick=()=>{const t=tabla();if(!t.f.length)return;const ws=XLSX.utils.aoa_to_sheet([['Cómputo de términos'],[],HD,...t.f,['','','','','TOTAL',t.H,t.C],[],[t.nota]]);ws['!cols']=[{wch:5},{wch:12},{wch:12},{wch:42},{wch:11},{wch:13},{wch:16}];const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Términos');sv('computo-terminos.xlsx',XLSX.write(wb,{type:'array',bookType:'xlsx'}))};
 $('dh').onclick=()=>{const t=tabla();if(!t.f.length)return;const td=(a,b)=>'<td'+(b||'')+'>'+a+'</td>';
 const body=t.f.map(x=>'<tr>'+x.map((c,j)=>td(esc(c),j>4?' style="text-align:right"':'')).join('')+'</tr>').join('');
