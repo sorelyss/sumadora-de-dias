@@ -3,59 +3,59 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Calculadora de términos</title>
 <style>
-:root{--bg:#f6f5f1;--card:#fff;--tx:#1d1d1b;--mu:#6b6a65;--bd:#dcdad2;--ac:#1f4e79;--ac2:#e3edf6;--hol:#b3261e;--holbg:#fbe9e7;--rg:#cfe0f0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17181a;--card:#222427;--tx:#ececea;--mu:#9a9993;--bd:#383a3e;--ac:#7fb2e0;--ac2:#243445;--hol:#ff8a80;--holbg:#3a2321;--rg:#2d4a66;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#17181a;--card:#222427;--tx:#ececea;--mu:#9a9993;--bd:#383a3e;--ac:#7fb2e0;--ac2:#243445;--hol:#ff8a80;--holbg:#3a2321;--rg:#2d4a66;color-scheme:dark}
+:root{--bg:#f6f5f1;--card:#fff;--tx:#1d1d1b;--mu:#6b6a65;--bd:#dcdad2;--ac:#1f4e79;--ac2:#e3edf6;--hol:#b3261e;--holbg:#fbe9e7;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17181a;--card:#222427;--tx:#ececea;--mu:#9a9993;--bd:#383a3e;--ac:#7fb2e0;--ac2:#243445;--hol:#ff8a80;--holbg:#3a2321;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17181a;--card:#222427;--tx:#ececea;--mu:#9a9993;--bd:#383a3e;--ac:#7fb2e0;--ac2:#243445;--hol:#ff8a80;--holbg:#3a2321;color-scheme:dark}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 system-ui,-apple-system,Segoe UI,sans-serif}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--ac)}
-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--ac);color:#fff;padding:12px 16px;display:flex;gap:12px;align-items:center;justify-content:space-around;text-align:center}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) header,:root:not([data-theme="light"]) body::before{background:#10202f}}
-:root[data-theme="dark"] header,:root[data-theme="dark"] body::before{background:#10202f}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:#1f4e79}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:#1f4e79;color:#fff;padding:12px 16px;display:flex;gap:12px;align-items:center;justify-content:space-around;text-align:center}
 header b{display:block;font-size:2rem;line-height:1}header span{font-size:.8rem;opacity:.9}
 main{max-width:900px;margin:0 auto;padding:14px;display:grid;gap:14px;grid-template-columns:1fr}
 @media(min-width:820px){main{grid-template-columns:1.1fr 1fr;align-items:start}}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px}
 h2{margin:0 0 8px;font-size:1rem}
-.row{display:grid;grid-template-columns:1fr 1fr auto;gap:6px;align-items:end;padding:8px 0;border-top:1px solid var(--bd)}
-.row:first-of-type{border-top:0}
+.row{display:grid;grid-template-columns:1fr 1fr auto;gap:6px;align-items:end;padding:8px;border-top:1px solid var(--bd);border-radius:8px}
+.row:first-of-type{border-top:0}.row.sel{background:var(--ac2)}
 label{font-size:.72rem;color:var(--mu);display:block}
-input[type=date]{width:100%;box-sizing:border-box;font:inherit;padding:7px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
-input.act{outline:2px solid var(--ac)}
+.df,.ob{width:100%;box-sizing:border-box;font:inherit;padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+.df.act{outline:2px solid var(--ac)}.ob{grid-column:1/-1}
 .res{grid-column:1/-1;font-size:.85rem;color:var(--mu)}.res b{color:var(--tx)}
-button{font:inherit;border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:8px;padding:7px 10px;cursor:pointer}
+button,select{font:inherit;border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:8px;padding:7px 10px;cursor:pointer}
 button.p{background:var(--ac);color:#fff;border-color:var(--ac)}
 .x{color:var(--hol)}
 .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px;font-size:.85rem}
-.nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.nav b{text-transform:capitalize}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.nav b{text-transform:capitalize}
+.pn{grid-column:1/-1}.cp{border:1px solid var(--bd);border-radius:10px;padding:8px;background:var(--card)}
 .g{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}
 .g .h{font-size:.7rem;color:var(--mu);padding:2px}
-.d{padding:8px 0;border-radius:6px;cursor:pointer;font-size:.9rem;border:1px solid transparent}
+.d{padding:8px 0;border-radius:6px;cursor:pointer;font-size:.9rem;user-select:none}
 .d.wk{color:var(--mu)}.d.hol{background:var(--holbg);color:var(--hol);font-weight:600}
-.d.in{background:var(--rg);color:var(--tx)}.d.edge{background:var(--ac);color:#fff}
-.d.inx{background:var(--holbg);color:var(--tx);text-decoration:line-through}.ob{grid-column:1/-1;box-sizing:border-box;width:100%;font:inherit;padding:7px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}.dl{grid-column:1/-1;font-size:.85rem;display:flex;gap:6px;align-items:center;color:var(--tx)}
+.d.inx{text-decoration:line-through}.d.edge{font-weight:700}
+.d.se{cursor:grab;touch-action:none}.d.gb{outline:3px solid var(--tx);outline-offset:-3px}.d.ov{outline:2px dashed var(--tx);outline-offset:-2px}
 .hl{font-size:.8rem;color:var(--mu);margin:8px 0 0;padding:0;list-style:none}.hl i{color:var(--hol);font-style:normal}
-.w{color:var(--hol);font-size:.8rem}
+.w{color:var(--hol);font-size:.8rem}.dl{grid-column:1/-1;font-size:.85rem;display:flex;gap:6px;align-items:center;color:var(--tx)}
 </style></head><body>
 <header><div><b id="tH">0</b><span>días hábiles</span></div><div><b id="tC">0</b><span>días calendario</span></div></header>
 <main>
 <section class="card"><h2>Rangos de fechas</h2><div id="rows"></div>
 <div class="bar"><button class="p" id="add">+ Agregar rango</button>
 <label style="display:flex;gap:6px;align-items:center;font-size:.85rem;color:var(--tx)"><input type="checkbox" id="inc"> Contar también el día inicial</label></div>
-<div class="bar" id="dl" hidden><button id="dx">⬇ Descargar Excel</button><button id="dh">⬇ Descargar resumen (HTML)</button></div><p class="res" style="margin:8px 0 0">Los rangos marcados como «Descontar» se restan del total (en el calendario se ven tachados). Por defecto no se cuenta el día inicial (el término corre desde el día siguiente), así los rangos encadenados suman sin duplicar el día de empalme. Hábiles: lunes a viernes sin festivos de Colombia.</p></section>
+<div class="bar" id="dl" hidden><button id="dx">⬇ Descargar Excel</button><button id="dh">⬇ Descargar resumen (HTML)</button></div>
+<p class="res" style="margin:8px 0 0">Toca «Desde» o «Hasta» para abrir el calendario: primer clic = inicio, segundo clic = fin (también puedes escribir dd/mm/aaaa). Los rangos «Descontar» se restan del total. Por defecto no se cuenta el día inicial. Hábiles: lunes a viernes sin festivos de Colombia.</p></section>
 <section class="card"><div class="nav"><button id="pv">‹</button><b id="mt"></b><button id="nx">›</button></div>
 <div class="bar" style="margin:0 0 6px;justify-content:center"><select id="ms"></select><input id="ys" type="number" style="width:80px;font:inherit;padding:6px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)"></div>
 <div class="g" id="cal"></div><ul class="hl" id="hl"></ul>
-<p class="res">Toca un día para llenar el campo resaltado (primero «Desde», luego «Hasta»).</p></section>
+<p class="res" id="hint"></p></section>
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 const $=id=>document.getElementById(id),D=864e5,MN=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-const P=s=>{const[a,b,c]=s.split('-').map(Number);return Date.UTC(a,b-1,c)},F=t=>new Date(t).toISOString().slice(0,10);
+const P=s=>{const[a,b,c]=s.split('-').map(Number);return Date.UTC(a,b-1,c)},F=t=>new Date(t).toISOString().slice(0,10),fd=t=>t.split('-').reverse().join('/');
+const COL=['#1f77b4','#e67e22','#2e9e5b','#8e44ad','#c0392b','#16a5a5','#b8a000','#d6528f'],esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const mon=t=>{const w=new Date(t).getUTCDay();return w==1?t:t+((8-w)%7)*D};
-const HC={},COL=['#1f77b4','#e67e22','#2e9e5b','#8e44ad','#c0392b','#16a5a5','#b8a000','#d6528f'],esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),fd=t=>t.split('-').reverse().join('/');
-function hol(y){if(HC[y])return HC[y];const h={},u=(m,d)=>Date.UTC(y,m-1,d),add=(t,n,s)=>{h[F(t)]=n};
+const HC={};
+function hol(y){if(HC[y])return HC[y];const h={},u=(m,d)=>Date.UTC(y,m-1,d),add=(t,n)=>{h[F(t)]=n};
 [[1,1,'Año Nuevo'],[5,1,'Día del Trabajo'],[7,20,'Independencia'],[8,7,'Batalla de Boyacá'],[12,8,'Inmaculada Concepción'],[12,25,'Navidad']].forEach(([m,d,n])=>add(u(m,d),n));
 [[1,6,'Reyes Magos'],[3,19,'San José'],[6,29,'San Pedro y San Pablo'],[8,15,'Asunción de la Virgen'],[10,12,'Día de la Raza'],[11,1,'Todos los Santos'],[11,11,'Independencia de Cartagena']].forEach(([m,d,n])=>add(mon(u(m,d)),n));
 const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),hh=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-hh-k)%7,m=Math.floor((a+11*hh+22*l)/451),mo=Math.floor((hh+l-7*m+114)/31),da=((hh+l-7*m+114)%31)+1,E=u(mo,da);
@@ -63,23 +63,50 @@ add(E-3*D,'Jueves Santo');add(E-2*D,'Viernes Santo');add(mon(E+39*D),'Ascensión
 return HC[y]=h}
 const isH=t=>hol(new Date(t).getUTCFullYear())[F(t)];
 const biz=t=>{const w=new Date(t).getUTCDay();return w>0&&w<6&&!isH(t)};
-let rows=[{s:'',e:'',d:false,o:''}],act={i:0,f:'s'},vy,vm;const now=new Date();vy=now.getFullYear();vm=now.getMonth();
-function calc(r){if(!r.s||!r.e)return null;const s=P(r.s),e=P(r.e),inc=$('inc').checked;if(e<s)return{err:1};
-let n=0;for(let t=s+(inc?0:D);t<=e;t+=D)if(biz(t))n++;return{c:Math.round((e-s)/D)+(inc?1:0),h:n}}
-function rowsR(){$('rows').innerHTML=rows.map((r,i)=>`<div class="row" style="border-right:6px solid ${COL[i%COL.length]};padding-right:8px"><div><label>Desde</label><input type="date" data-i="${i}" data-f="s" value="${r.s}" class="${act.i==i&&act.f=='s'?'act':''}"></div><div><label>Hasta</label><input type="date" data-i="${i}" data-f="e" value="${r.e}" class="${act.i==i&&act.f=='e'?'act':''}"></div><button class="x" data-del="${i}" ${rows.length<2?'disabled':''}>✕</button><input type="text" class="ob" data-o="${i}" placeholder="Observación (opcional)" value="${esc(r.o||'')}"><label class="dl"><input type="checkbox" data-d="${i}" ${r.d?'checked':''}> Descontar este rango (resta del total)</label><div class="res" id="r${i}"></div></div>`).join('');
-document.querySelectorAll('#rows input').forEach(x=>{x.onfocus=()=>{act={i:+x.dataset.i,f:x.dataset.f};mark()};x.onchange=()=>{rows[x.dataset.i][x.dataset.f]=x.value;if(x.value){const d=new Date(P(x.value));vy=d.getUTCFullYear();vm=d.getUTCMonth()}upd();const i=+x.dataset.i;if(x.dataset.f=='s'&&x.value&&!rows[i].e){act={i,f:'e'};mark();const n=document.querySelector(`#rows input[data-i="${i}"][data-f="e"]`);if(n){n.focus();try{n.showPicker()}catch(_){}}}}});
-document.querySelectorAll('[data-o]').forEach(x=>x.oninput=()=>{rows[+x.dataset.o].o=x.value});document.querySelectorAll('[data-d]').forEach(c=>c.onchange=()=>{rows[+c.dataset.d].d=c.checked;rowsR()});document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{rows.splice(+b.dataset.del,1);act={i:0,f:'s'};rowsR();upd()});upd()}
-function mark(){document.querySelectorAll('#rows input').forEach(x=>x.classList.toggle('act',+x.dataset.i==act.i&&x.dataset.f==act.f))}
+const now=new Date();let vy=now.getFullYear(),vm=now.getMonth(),rows=[{s:'',e:'',d:false,o:''}],sel=0,pk={i:0,step:'s',y:vy,m:vm},grab=null,drag=null;
+function calc(r){if(!r.s||!r.e)return null;const s=P(r.s),e=P(r.e),inc=$('inc').checked;if(e<s)return{err:1};let n=0;for(let t=s+(inc?0:D);t<=e;t+=D)if(biz(t))n++;return{c:Math.round((e-s)/D)+(inc?1:0),h:n}}
+function mg(y,m,fn){const off=(new Date(Date.UTC(y,m,1)).getUTCDay()+6)%7,nd=new Date(Date.UTC(y,m+1,0)).getUTCDate();
+let h=['L','M','M','J','V','S','D'].map(x=>`<div class="h">${x}</div>`).join('')+'<div></div>'.repeat(off);
+for(let d=1;d<=nd;d++){const t=Date.UTC(y,m,d),w=new Date(t).getUTCDay(),n=isH(t);let c='d'+(w%6==0?' wk':'')+(n?' hol':''),st='';const x=fn(F(t));if(x){c+=' '+x[0];st=x[1]||''}h+=`<div class="${c}" style="${st}" data-t="${F(t)}" title="${n||''}">${d}</div>`}return h}
+function rowsR(){$('rows').innerHTML=rows.map((r,i)=>`<div class="row${sel==i?' sel':''}" data-i="${i}" style="border-right:6px solid ${COL[i%8]};padding-right:8px"><div><label>Desde</label><input class="df" inputmode="none" autocomplete="off" placeholder="dd/mm/aaaa" data-i="${i}" data-f="s" value="${r.s?fd(r.s):''}"></div><div><label>Hasta</label><input class="df" inputmode="none" autocomplete="off" placeholder="dd/mm/aaaa" data-i="${i}" data-f="e" value="${r.e?fd(r.e):''}"></div><button class="x" data-del="${i}" ${rows.length<2?'disabled':''}>✕</button><div class="pn" id="pn${i}"></div><input type="text" class="ob" data-o="${i}" placeholder="Observación (opcional)" value="${esc(r.o||'')}"><label class="dl"><input type="checkbox" data-d="${i}" ${r.d?'checked':''}> Descontar este rango (resta del total)</label><div class="res" id="r${i}"></div></div>`).join('');
+document.querySelectorAll('.df').forEach(x=>{x.onfocus=()=>openP(+x.dataset.i,x.dataset.f);x.onchange=()=>{const i=+x.dataset.i,f=x.dataset.f,v=pd(x.value);if(!x.value.trim())rows[i][f]='';else if(v)rows[i][f]=v;else x.value=rows[i][f]?fd(rows[i][f]):'';if(v){const d=new Date(P(v));pk=f=='s'?{i,step:'e',y:d.getUTCFullYear(),m:d.getUTCMonth()}:null}upd();panelR()}});
+document.querySelectorAll('[data-o]').forEach(x=>x.oninput=()=>{rows[+x.dataset.o].o=x.value});
+document.querySelectorAll('[data-d]').forEach(c=>c.onchange=()=>{rows[+c.dataset.d].d=c.checked;upd()});
+document.querySelectorAll('[data-del]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();rows.splice(+b.dataset.del,1);sel=Math.min(sel,rows.length-1);pk=null;grab=null;rowsR()});
+panelR();upd()}
+function pd(v){const m=v.trim().match(/^(\d{1,2})\D?(\d{1,2})\D?(\d{4})$/);if(!m)return null;const t=Date.UTC(+m[3],+m[2]-1,+m[1]),x=new Date(t);return x.getUTCDate()==+m[1]&&x.getUTCMonth()==+m[2]-1?F(t):null}
+function openP(i,f){const r=rows[i],d=new Date(r[f]?P(r[f]):r.s?P(r.s):Date.now());pk={i,step:f=='s'||!r.s?'s':'e',y:d.getUTCFullYear(),m:d.getUTCMonth()};if(sel!=i){sel=i;grab=null;markSel();cal()}panelR()}
+function markSel(){document.querySelectorAll('.row').forEach(x=>x.classList.toggle('sel',+x.dataset.i==sel))}
+function panelR(){document.querySelectorAll('.pn').forEach(e=>e.innerHTML='');document.querySelectorAll('.df').forEach(x=>x.classList.toggle('act',!!pk&&+x.dataset.i==pk.i&&x.dataset.f==pk.step));if(!pk)return;
+const r=rows[pk.i],col=COL[pk.i%8];
+const g=mg(pk.y,pk.m,k=>{if(k==r.s||k==r.e)return['edge',`background:${col};color:#fff`];if(r.s&&r.e&&k>r.s&&k<r.e)return['',`background:${col}40`]});
+const pn=$('pn'+pk.i);pn.innerHTML=`<div class="cp"><div class="nav"><button data-pn="-1">‹</button><b>${MN[pk.m]} ${pk.y}</b><button data-pn="1">›</button></div><div class="g">${g}</div><p class="res" style="margin:6px 0 0"><b>${pk.step=='s'?'Elige el día de inicio':'Elige el día final'}</b></p></div>`;
+pn.querySelectorAll('[data-pn]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();pk.m+=+b.dataset.pn;if(pk.m<0){pk.m=11;pk.y--}if(pk.m>11){pk.m=0;pk.y++}panelR()});
+pn.querySelectorAll('.d').forEach(c=>{c.onclick=ev=>{ev.stopPropagation();pickP(c.dataset.t)};c.onmouseover=()=>hov(c.dataset.t)})}
+function hov(k){if(!pk||pk.step!='e'||!rows[pk.i].s)return;const s=rows[pk.i].s,col=COL[pk.i%8];document.querySelectorAll(`#pn${pk.i} .d`).forEach(c=>{if(!c.classList.contains('edge'))c.style.background=c.dataset.t>s&&c.dataset.t<=k?col+'40':''})}
+function pickP(k){const r=rows[pk.i];sel=pk.i;if(pk.step=='s'||!r.s||k<r.s){r.s=k;r.e='';pk.step='e'}else{r.e=k;pk=null}grab=null;rowsR()}
 function upd(){let H=0,C=0;rows.forEach((r,i)=>{const v=calc(r),el=$('r'+i);if(!el)return;if(!v)el.innerHTML='';else if(v.err)el.innerHTML='<span class="w">La fecha final es anterior a la inicial</span>';else{const g=r.d?-1:1,sg=r.d?'−':'';H+=g*v.h;C+=g*v.c;el.innerHTML=`${r.d?'Descuenta · ':''}Hábiles: <b>${sg}${v.h}</b> · Calendario: <b>${sg}${v.c}</b>`}});$('tH').textContent=H;$('tC').textContent=C;cal()}
 function cal(){$('mt').textContent=MN[vm]+' '+vy;$('ms').value=vm;$('ys').value=vy;
-const f=Date.UTC(vy,vm,1),off=(new Date(f).getUTCDay()+6)%7,days=new Date(Date.UTC(vy,vm+1,0)).getUTCDate();
-const rg=[],ed=new Map();rows.forEach((r,i)=>{const k=COL[i%COL.length];if(r.s)ed.set(P(r.s),k);if(r.e)ed.set(P(r.e),k);if(r.s&&r.e&&P(r.e)>=P(r.s))rg.push([P(r.s),P(r.e),r.d,k])});
-let h=['L','M','M','J','V','S','D'].map(x=>`<div class="h">${x}</div>`).join('')+'<div></div>'.repeat(off);
-for(let d=1;d<=days;d++){const t=Date.UTC(vy,vm,d),w=new Date(t).getUTCDay(),n=isH(t);let c='d';if(w==0||w==6)c+=' wk';if(n)c+=' hol';let st='';const ht=rg.filter(([a,b])=>t>a&&t<=b).pop();if(ht){c+=ht[2]?' inx':' in';st=`background:${ht[3]}40`}if(ed.has(t)){c+=' edge';st=`background:${ed.get(t)};color:#fff`}h+=`<div class="${c}" style="${st}" data-t="${F(t)}" title="${n||''}">${d}</div>`}
-$('cal').innerHTML=h;document.querySelectorAll('.d').forEach(x=>x.onclick=()=>pick(x.dataset.t));
+const rg=[],ed=new Map();rows.forEach((r,i)=>{const k=COL[i%8];if(r.s)ed.set(r.s,k);if(r.e)ed.set(r.e,k);if(r.s&&r.e&&r.e>=r.s)rg.push([r.s,r.e,r.d,k])});
+const R=rows[sel],sr=R&&R.s&&R.e&&R.e>=R.s?[R.s,R.e,COL[sel%8]]:null;
+$('cal').innerHTML=mg(vy,vm,k=>{let c='',st='';const h=rg.filter(x=>k>x[0]&&k<x[1]).pop();if(h){c=h[2]?'inx':'in';st=`background:${h[3]}40`}
+if(ed.has(k)){c='edge';st=`background:${ed.get(k)};color:#fff`}
+if(sr&&k>=sr[0]&&k<=sr[1])st+=`;box-shadow:inset 0 0 0 2px ${sr[2]}`;
+if(R&&(R.s==k||R.e==k))c+=' se';if(grab&&R&&R[grab.f]==k)c+=' gb';
+return(c||st)?[c,st]:null});
+$('hint').textContent=grab?`Toca el nuevo día ${grab.f=='s'?'de inicio':'final'} del rango ${sel+1} (Esc para cancelar).`:sr?`Rango ${sel+1} seleccionado. Toca su inicio o su fin y luego el nuevo día, o arrástralo.`:'Toca un día coloreado para seleccionar su rango.';
 const hs=Object.entries(hol(vy)).filter(([k])=>+k.slice(5,7)==vm+1);$('hl').innerHTML=hs.map(([k,n])=>`<li><i>●</i> ${+k.slice(8)} — ${n}</li>`).join('')}
-function pick(v){rows[act.i][act.f]=v;if(act.f=='s')act.f='e';else{act={i:act.i,f:'e'}}rowsR()}
-$('add').onclick=()=>{const l=rows[rows.length-1];rows.push({s:l.e||'',e:'',d:false,o:''});act={i:rows.length-1,f:'e'};rowsR()};
+function place(k,f){const r=rows[sel],ff=f||grab.f;r[ff]=k;if(r.s&&r.e&&r.s>r.e)[r.s,r.e]=[r.e,r.s];grab=null;pk=null;rowsR()}
+$('cal').onpointerdown=ev=>{const c=ev.target.closest('.d');if(!c)return;const k=c.dataset.t,r=rows[sel];if(grab){place(k);return}
+const f=r&&(r.e==k?'e':r.s==k?'s':null);if(f){drag={f,t0:k,over:null};ev.preventDefault();return}
+const hit=[];rows.forEach((x,i)=>{if(x.s&&x.e&&k>=x.s&&k<=x.e)hit.push(i)});if(hit.length){const j=hit.indexOf(sel);sel=j<0?hit[hit.length-1]:hit[(j+1)%hit.length];grab=null;pk=null;rowsR()}};
+document.addEventListener('pointermove',ev=>{if(!drag)return;const el=document.elementFromPoint(ev.clientX,ev.clientY),c=el&&el.closest&&el.closest('#cal .d');document.querySelectorAll('#cal .ov').forEach(x=>x.classList.remove('ov'));if(c&&c.dataset.t!=drag.t0){drag.over=c.dataset.t;c.classList.add('ov')}});
+document.addEventListener('pointerup',()=>{if(!drag)return;const d=drag;drag=null;if(d.over)place(d.over,d.f);else{grab={f:d.f};cal()}});
+document.addEventListener('pointercancel',()=>{drag=null});
+document.addEventListener('keydown',ev=>{if(ev.key=='Escape'){grab=null;pk=null;panelR();cal()}});
+document.addEventListener('click',ev=>{if(pk&&!ev.target.closest('.pn,.df')){pk=null;panelR()}});
+$('rows').addEventListener('click',ev=>{const rw=ev.target.closest('.row');if(rw&&+rw.dataset.i!=sel){sel=+rw.dataset.i;grab=null;markSel();cal()}});
+$('add').onclick=ev=>{ev.stopPropagation();const l=rows[rows.length-1];rows.push({s:l.e||'',e:'',d:false,o:''});sel=rows.length-1;grab=null;const d=new Date(l.e?P(l.e):Date.now());pk={i:sel,step:l.e?'e':'s',y:d.getUTCFullYear(),m:d.getUTCMonth()};vy=pk.y;vm=pk.m;rowsR()};
 $('inc').onchange=upd;
 $('pv').onclick=()=>{vm--;if(vm<0){vm=11;vy--}cal()};$('nx').onclick=()=>{vm++;if(vm>11){vm=0;vy++}cal()};
 $('ms').innerHTML=MN.map((m,i)=>`<option value="${i}">${m}</option>`).join('');
@@ -91,7 +118,7 @@ function tabla(){let H=0,C=0;const f=[];rows.forEach((r,i)=>{const v=calc(r);if(
 return{f,H,C,nota:`Cómputo ${$('inc').checked?'incluyendo':'sin incluir'} el día inicial. Días hábiles: lunes a viernes, excluidos los festivos de Colombia. Generado el ${new Date().toLocaleDateString('es-CO')}.`}}
 const sv=async(n,d)=>{if(DL){try{await DL.save({filename:n,data:d})}catch(_){}return}const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([d]));a.download=n;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
 $('dx').onclick=()=>{const t=tabla();if(!t.f.length)return;const ws=XLSX.utils.aoa_to_sheet([['Cómputo de términos'],[],HD,...t.f,['','','','','TOTAL',t.H,t.C],[],[t.nota]]);ws['!cols']=[{wch:5},{wch:12},{wch:12},{wch:42},{wch:11},{wch:13},{wch:16}];const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Términos');sv('computo-terminos.xlsx',XLSX.write(wb,{type:'array',bookType:'xlsx'}))};
-$('dh').onclick=()=>{const t=tabla();if(!t.f.length)return;const td=(a,b)=>'<td'+(b||'')+'>'+a+'</td>';
-const body=t.f.map(x=>'<tr>'+x.map((c,j)=>td(esc(c),j>4?' style="text-align:right"':'')).join('')+'</tr>').join('');
-const html=`<!DOCTYPE html><html lang="es"><meta charset="utf-8"><title>Cómputo de términos</title><style>body{font:14px Arial,sans-serif;margin:24px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #888;padding:6px 8px;text-align:left}th{background:#e8eef4}tfoot td{font-weight:bold}p{font-size:12px;color:#555}</style><h2>Cómputo de términos</h2><table><thead><tr>${HD.map(h=>'<th>'+h+'</th>').join('')}</tr></thead><tbody>${body}</tbody><tfoot><tr><td colspan="5">TOTAL</td><td style="text-align:right">${t.H}</td><td style="text-align:right">${t.C}</td></tr></tfoot></table><p>${t.nota}</p></html>`;sv('computo-terminos.html',html)};
+$('dh').onclick=()=>{const t=tabla();if(!t.f.length)return;
+const body=t.f.map(x=>'<tr>'+x.map((c,j)=>'<td'+(j>4?' style="text-align:right"':'')+'>'+esc(c)+'</td>').join('')+'</tr>').join('');
+sv('computo-terminos.html',`<!DOCTYPE html><html lang="es"><meta charset="utf-8"><title>Cómputo de términos</title><style>body{font:14px Arial,sans-serif;margin:24px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #888;padding:6px 8px;text-align:left}th{background:#e8eef4}tfoot td{font-weight:bold}p{font-size:12px;color:#555}</style><h2>Cómputo de términos</h2><table><thead><tr>${HD.map(h=>'<th>'+h+'</th>').join('')}</tr></thead><tbody>${body}</tbody><tfoot><tr><td colspan="5">TOTAL</td><td style="text-align:right">${t.H}</td><td style="text-align:right">${t.C}</td></tr></tfoot></table><p>${t.nota}</p></html>`)};
 </script></body></html>
