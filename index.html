@@ -34,7 +34,7 @@ button.p{background:var(--ac);color:#fff;border-color:var(--ac)}
 .d{padding:8px 0;border-radius:6px;cursor:pointer;font-size:.9rem;border:1px solid transparent}
 .d.wk{color:var(--mu)}.d.hol{background:var(--holbg);color:var(--hol);font-weight:600}
 .d.in{background:var(--rg);color:var(--tx)}.d.edge{background:var(--ac);color:#fff}
-.d.o{opacity:.35}
+.d.inx{background:var(--holbg);color:var(--tx);text-decoration:line-through}.ob{grid-column:1/-1;box-sizing:border-box;width:100%;font:inherit;padding:7px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}.dl{grid-column:1/-1;font-size:.85rem;display:flex;gap:6px;align-items:center;color:var(--tx)}
 .hl{font-size:.8rem;color:var(--mu);margin:8px 0 0;padding:0;list-style:none}.hl i{color:var(--hol);font-style:normal}
 .w{color:var(--hol);font-size:.8rem}
 </style></head><body>
@@ -43,17 +43,18 @@ button.p{background:var(--ac);color:#fff;border-color:var(--ac)}
 <section class="card"><h2>Rangos de fechas</h2><div id="rows"></div>
 <div class="bar"><button class="p" id="add">+ Agregar rango</button>
 <label style="display:flex;gap:6px;align-items:center;font-size:.85rem;color:var(--tx)"><input type="checkbox" id="inc"> Contar también el día inicial</label></div>
-<p class="res" style="margin:8px 0 0">Por defecto no se cuenta el día inicial (el término corre desde el día siguiente), así los rangos encadenados suman sin duplicar el día de empalme. Hábiles: lunes a viernes sin festivos de Colombia.</p></section>
+<div class="bar" id="dl" hidden><button id="dx">⬇ Descargar Excel</button><button id="dh">⬇ Descargar resumen (HTML)</button></div><p class="res" style="margin:8px 0 0">Los rangos marcados como «Descontar» se restan del total (en el calendario se ven tachados). Por defecto no se cuenta el día inicial (el término corre desde el día siguiente), así los rangos encadenados suman sin duplicar el día de empalme. Hábiles: lunes a viernes sin festivos de Colombia.</p></section>
 <section class="card"><div class="nav"><button id="pv">‹</button><b id="mt"></b><button id="nx">›</button></div>
 <div class="bar" style="margin:0 0 6px;justify-content:center"><select id="ms"></select><input id="ys" type="number" style="width:80px;font:inherit;padding:6px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)"></div>
 <div class="g" id="cal"></div><ul class="hl" id="hl"></ul>
 <p class="res">Toca un día para llenar el campo resaltado (primero «Desde», luego «Hasta»).</p></section>
 </main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 const $=id=>document.getElementById(id),D=864e5,MN=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 const P=s=>{const[a,b,c]=s.split('-').map(Number);return Date.UTC(a,b-1,c)},F=t=>new Date(t).toISOString().slice(0,10);
 const mon=t=>{const w=new Date(t).getUTCDay();return w==1?t:t+((8-w)%7)*D};
-const HC={};
+const HC={},COL=['#1f77b4','#e67e22','#2e9e5b','#8e44ad','#c0392b','#16a5a5','#b8a000','#d6528f'],esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),fd=t=>t.split('-').reverse().join('/');
 function hol(y){if(HC[y])return HC[y];const h={},u=(m,d)=>Date.UTC(y,m-1,d),add=(t,n,s)=>{h[F(t)]=n};
 [[1,1,'Año Nuevo'],[5,1,'Día del Trabajo'],[7,20,'Independencia'],[8,7,'Batalla de Boyacá'],[12,8,'Inmaculada Concepción'],[12,25,'Navidad']].forEach(([m,d,n])=>add(u(m,d),n));
 [[1,6,'Reyes Magos'],[3,19,'San José'],[6,29,'San Pedro y San Pablo'],[8,15,'Asunción de la Virgen'],[10,12,'Día de la Raza'],[11,1,'Todos los Santos'],[11,11,'Independencia de Cartagena']].forEach(([m,d,n])=>add(mon(u(m,d)),n));
@@ -62,26 +63,35 @@ add(E-3*D,'Jueves Santo');add(E-2*D,'Viernes Santo');add(mon(E+39*D),'Ascensión
 return HC[y]=h}
 const isH=t=>hol(new Date(t).getUTCFullYear())[F(t)];
 const biz=t=>{const w=new Date(t).getUTCDay();return w>0&&w<6&&!isH(t)};
-let rows=[{s:'',e:''}],act={i:0,f:'s'},vy,vm;const now=new Date();vy=now.getFullYear();vm=now.getMonth();
+let rows=[{s:'',e:'',d:false,o:''}],act={i:0,f:'s'},vy,vm;const now=new Date();vy=now.getFullYear();vm=now.getMonth();
 function calc(r){if(!r.s||!r.e)return null;const s=P(r.s),e=P(r.e),inc=$('inc').checked;if(e<s)return{err:1};
 let n=0;for(let t=s+(inc?0:D);t<=e;t+=D)if(biz(t))n++;return{c:Math.round((e-s)/D)+(inc?1:0),h:n}}
-function rowsR(){$('rows').innerHTML=rows.map((r,i)=>`<div class="row"><div><label>Desde</label><input type="date" data-i="${i}" data-f="s" value="${r.s}" class="${act.i==i&&act.f=='s'?'act':''}"></div><div><label>Hasta</label><input type="date" data-i="${i}" data-f="e" value="${r.e}" class="${act.i==i&&act.f=='e'?'act':''}"></div><button class="x" data-del="${i}" ${rows.length<2?'disabled':''}>✕</button><div class="res" id="r${i}"></div></div>`).join('');
-document.querySelectorAll('#rows input').forEach(x=>{x.onfocus=()=>{act={i:+x.dataset.i,f:x.dataset.f};mark()};x.onchange=()=>{rows[x.dataset.i][x.dataset.f]=x.value;if(x.value){const d=new Date(P(x.value));vy=d.getUTCFullYear();vm=d.getUTCMonth()}upd()}});
-document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{rows.splice(+b.dataset.del,1);act={i:0,f:'s'};rowsR();upd()});upd()}
+function rowsR(){$('rows').innerHTML=rows.map((r,i)=>`<div class="row" style="border-right:6px solid ${COL[i%COL.length]};padding-right:8px"><div><label>Desde</label><input type="date" data-i="${i}" data-f="s" value="${r.s}" class="${act.i==i&&act.f=='s'?'act':''}"></div><div><label>Hasta</label><input type="date" data-i="${i}" data-f="e" value="${r.e}" class="${act.i==i&&act.f=='e'?'act':''}"></div><button class="x" data-del="${i}" ${rows.length<2?'disabled':''}>✕</button><input type="text" class="ob" data-o="${i}" placeholder="Observación (opcional)" value="${esc(r.o||'')}"><label class="dl"><input type="checkbox" data-d="${i}" ${r.d?'checked':''}> Descontar este rango (resta del total)</label><div class="res" id="r${i}"></div></div>`).join('');
+document.querySelectorAll('#rows input').forEach(x=>{x.onfocus=()=>{act={i:+x.dataset.i,f:x.dataset.f};mark()};x.onchange=()=>{rows[x.dataset.i][x.dataset.f]=x.value;if(x.value){const d=new Date(P(x.value));vy=d.getUTCFullYear();vm=d.getUTCMonth()}upd();const i=+x.dataset.i;if(x.dataset.f=='s'&&x.value&&!rows[i].e){act={i,f:'e'};mark();const n=document.querySelector(`#rows input[data-i="${i}"][data-f="e"]`);if(n){n.focus();try{n.showPicker()}catch(_){}}}}});
+document.querySelectorAll('[data-o]').forEach(x=>x.oninput=()=>{rows[+x.dataset.o].o=x.value});document.querySelectorAll('[data-d]').forEach(c=>c.onchange=()=>{rows[+c.dataset.d].d=c.checked;rowsR()});document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{rows.splice(+b.dataset.del,1);act={i:0,f:'s'};rowsR();upd()});upd()}
 function mark(){document.querySelectorAll('#rows input').forEach(x=>x.classList.toggle('act',+x.dataset.i==act.i&&x.dataset.f==act.f))}
-function upd(){let H=0,C=0;rows.forEach((r,i)=>{const v=calc(r),el=$('r'+i);if(!el)return;if(!v)el.innerHTML='';else if(v.err)el.innerHTML='<span class="w">La fecha final es anterior a la inicial</span>';else{H+=v.h;C+=v.c;el.innerHTML=`Hábiles: <b>${v.h}</b> · Calendario: <b>${v.c}</b>`}});$('tH').textContent=H;$('tC').textContent=C;cal()}
+function upd(){let H=0,C=0;rows.forEach((r,i)=>{const v=calc(r),el=$('r'+i);if(!el)return;if(!v)el.innerHTML='';else if(v.err)el.innerHTML='<span class="w">La fecha final es anterior a la inicial</span>';else{const g=r.d?-1:1,sg=r.d?'−':'';H+=g*v.h;C+=g*v.c;el.innerHTML=`${r.d?'Descuenta · ':''}Hábiles: <b>${sg}${v.h}</b> · Calendario: <b>${sg}${v.c}</b>`}});$('tH').textContent=H;$('tC').textContent=C;cal()}
 function cal(){$('mt').textContent=MN[vm]+' '+vy;$('ms').value=vm;$('ys').value=vy;
 const f=Date.UTC(vy,vm,1),off=(new Date(f).getUTCDay()+6)%7,days=new Date(Date.UTC(vy,vm+1,0)).getUTCDate();
-const rg=rows.filter(r=>r.s&&r.e&&P(r.e)>=P(r.s)).map(r=>[P(r.s),P(r.e)]);const ed=new Set();rows.forEach(r=>{if(r.s)ed.add(P(r.s));if(r.e)ed.add(P(r.e))});
+const rg=[],ed=new Map();rows.forEach((r,i)=>{const k=COL[i%COL.length];if(r.s)ed.set(P(r.s),k);if(r.e)ed.set(P(r.e),k);if(r.s&&r.e&&P(r.e)>=P(r.s))rg.push([P(r.s),P(r.e),r.d,k])});
 let h=['L','M','M','J','V','S','D'].map(x=>`<div class="h">${x}</div>`).join('')+'<div></div>'.repeat(off);
-for(let d=1;d<=days;d++){const t=Date.UTC(vy,vm,d),w=new Date(t).getUTCDay(),n=isH(t);let c='d';if(w==0||w==6)c+=' wk';if(n)c+=' hol';if(rg.some(([a,b])=>t>a&&t<=b))c+=' in';if(ed.has(t))c+=' edge';h+=`<div class="${c}" data-t="${F(t)}" title="${n||''}">${d}</div>`}
+for(let d=1;d<=days;d++){const t=Date.UTC(vy,vm,d),w=new Date(t).getUTCDay(),n=isH(t);let c='d';if(w==0||w==6)c+=' wk';if(n)c+=' hol';let st='';const ht=rg.filter(([a,b])=>t>a&&t<=b).pop();if(ht){c+=ht[2]?' inx':' in';st=`background:${ht[3]}40`}if(ed.has(t)){c+=' edge';st=`background:${ed.get(t)};color:#fff`}h+=`<div class="${c}" style="${st}" data-t="${F(t)}" title="${n||''}">${d}</div>`}
 $('cal').innerHTML=h;document.querySelectorAll('.d').forEach(x=>x.onclick=()=>pick(x.dataset.t));
 const hs=Object.entries(hol(vy)).filter(([k])=>+k.slice(5,7)==vm+1);$('hl').innerHTML=hs.map(([k,n])=>`<li><i>●</i> ${+k.slice(8)} — ${n}</li>`).join('')}
 function pick(v){rows[act.i][act.f]=v;if(act.f=='s')act.f='e';else{act={i:act.i,f:'e'}}rowsR()}
-$('add').onclick=()=>{const l=rows[rows.length-1];rows.push({s:l.e||'',e:''});act={i:rows.length-1,f:'e'};rowsR()};
+$('add').onclick=()=>{const l=rows[rows.length-1];rows.push({s:l.e||'',e:'',d:false,o:''});act={i:rows.length-1,f:'e'};rowsR()};
 $('inc').onchange=upd;
 $('pv').onclick=()=>{vm--;if(vm<0){vm=11;vy--}cal()};$('nx').onclick=()=>{vm++;if(vm>11){vm=0;vy++}cal()};
 $('ms').innerHTML=MN.map((m,i)=>`<option value="${i}">${m}</option>`).join('');
 $('ms').onchange=e=>{vm=+e.target.value;cal()};$('ys').onchange=e=>{vy=+e.target.value||vy;cal()};
 rowsR();
+let DL=null;(async()=>{try{DL=await claude.use('downloads')}catch(_){}if(DL){$('dl').hidden=false;if(!window.XLSX)$('dx').hidden=true}})();
+const HD=['N.º','Desde','Hasta','Observación','Operación','Días hábiles','Días calendario'];
+function tabla(){let H=0,C=0;const f=[];rows.forEach((r,i)=>{const v=calc(r);if(!v||v.err)return;const g=r.d?-1:1;H+=g*v.h;C+=g*v.c;f.push([i+1,fd(r.s),fd(r.e),r.o||'',r.d?'Resta':'Suma',g*v.h,g*v.c])});
+return{f,H,C,nota:`Cómputo ${$('inc').checked?'incluyendo':'sin incluir'} el día inicial. Días hábiles: lunes a viernes, excluidos los festivos de Colombia. Generado el ${new Date().toLocaleDateString('es-CO')}.`}}
+const sv=async(n,d)=>{try{await DL.save({filename:n,data:d})}catch(_){}};
+$('dx').onclick=()=>{const t=tabla();if(!t.f.length)return;const ws=XLSX.utils.aoa_to_sheet([['Cómputo de términos'],[],HD,...t.f,['','','','','TOTAL',t.H,t.C],[],[t.nota]]);ws['!cols']=[{wch:5},{wch:12},{wch:12},{wch:42},{wch:11},{wch:13},{wch:16}];const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Términos');sv('computo-terminos.xlsx',XLSX.write(wb,{type:'array',bookType:'xlsx'}))};
+$('dh').onclick=()=>{const t=tabla();if(!t.f.length)return;const td=(a,b)=>'<td'+(b||'')+'>'+a+'</td>';
+const body=t.f.map(x=>'<tr>'+x.map((c,j)=>td(esc(c),j>4?' style="text-align:right"':'')).join('')+'</tr>').join('');
+const html=`<!DOCTYPE html><html lang="es"><meta charset="utf-8"><title>Cómputo de términos</title><style>body{font:14px Arial,sans-serif;margin:24px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #888;padding:6px 8px;text-align:left}th{background:#e8eef4}tfoot td{font-weight:bold}p{font-size:12px;color:#555}</style><h2>Cómputo de términos</h2><table><thead><tr>${HD.map(h=>'<th>'+h+'</th>').join('')}</tr></thead><tbody>${body}</tbody><tfoot><tr><td colspan="5">TOTAL</td><td style="text-align:right">${t.H}</td><td style="text-align:right">${t.C}</td></tr></tfoot></table><p>${t.nota}</p></html>`;sv('computo-terminos.html',html)};
 </script></body></html>
